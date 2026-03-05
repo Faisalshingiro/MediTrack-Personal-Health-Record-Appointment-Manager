@@ -66,10 +66,7 @@ const upcomingCount = computed(() => myAppointments.value.filter(a => a.status =
       <div class="appointments-timeline">
         <!-- Empty State Fallback: Renders when the physician has no scheduled entries -->
         <div v-if="myAppointments.length === 0" class="empty-schedules">
-          <svg class="empty-svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
+          <span class="empty-icon">⏰</span>
           <h4>Calendar is Clear</h4>
           <p>You have no scheduled appointments at the moment.</p>
         </div>
@@ -88,7 +85,7 @@ const upcomingCount = computed(() => myAppointments.value.filter(a => a.status =
             <div class="item-main">
               <div class="item-info">
                 <!-- Session Context: Time, Patient Name, and Reason for Visit -->
-                <span class="item-time" aria-hidden="true">⏰ {{ apt.time }}</span>
+                <span class="item-time">⏰ {{ apt.time }}</span>
                 <h4 class="item-patient">{{ apt.patientName }}</h4>
                 <p v-if="apt.reason" class="item-reason">{{ apt.reason }}</p>
                 <p v-else class="item-reason-placeholder">General Consultation</p>
@@ -151,13 +148,11 @@ const upcomingCount = computed(() => myAppointments.value.filter(a => a.status =
   color: var(--text-dim);
 }
 
-.empty-svg {
-  width: 56px;
-  height: 56px;
+.empty-icon {
+  font-size: 3rem;
   display: block;
-  margin: 0 auto 1.5rem;
-  color: var(--text-dim);
-  opacity: 0.15;
+  margin-bottom: 1rem;
+  opacity: 0.2;
 }
 
 /* Timeline Item Layout: Date component alongside the detail card */
@@ -231,10 +226,10 @@ const upcomingCount = computed(() => myAppointments.value.filter(a => a.status =
   text-transform: uppercase;
 }
 
-.status-pill.pending { background: rgba(234, 179, 8, 0.15); color: #b45309; }
-.status-pill.approved { background: rgba(59, 130, 246, 0.15); color: var(--primary-dark); }
-.status-pill.completed { background: rgba(16, 185, 129, 0.15); color: #047857; }
-.status-pill.cancelled { background: rgba(239, 68, 68, 0.15); color: #b91c1c; }
+.status-pill.pending { background: rgba(234, 179, 8, 0.1); color: #d97706; }
+.status-pill.approved { background: rgba(59, 130, 246, 0.1); color: var(--primary-main); }
+.status-pill.completed { background: rgba(16, 185, 129, 0.1); color: #059669; }
+.status-pill.cancelled { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
 
 /* Visual vertical borders to further differentiate appointment status at a glance */
 .item-body.completed { border-left: 4px solid #10b981; }

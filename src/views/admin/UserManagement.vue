@@ -19,8 +19,6 @@ const authStore = useAuthStore()
 // --- UI STATE ---
 // Reactive flag to control the visibility of the "Add Doctor" modal.
 const showProvisionModal = ref(false)
-// Controls the visibility of the "Edit User" modal.
-const showEditModal = ref(false)
 // Tracks the submission state to show loading indicators during provisioning.
 const isSubmitting = ref(false)
 // Holds validation or system error messages for display in the UI.
@@ -28,14 +26,13 @@ const errorMessage = ref('')
 // User input for real-time table filtering.
 const filterQuery = ref('')
 
-// Temporary buffer for the user profile currently being edited.
-const editingUser = ref(null)
-
 // --- DATA DERIVATION ---
 /**
  * filteredUsers - Computed property that provides a filtered subset of the user registry.
+ * Performs a case-insensitive search across names, emails, and roles.
  */
 const filteredUsers = computed(() => {
+  // If the search box is empty, return the full list.
   if (!filterQuery.value) return authStore.allUsers
   
   const q = filterQuery.value.toLowerCase()
@@ -47,91 +44,68 @@ const filteredUsers = computed(() => {
 })
 
 // --- FORM DATA ---
+/**
+ * newDoctor - Reactive object used to bind the provisioning form data.
+ * Initially seeded with a default passkey.
+ */
 const newDoctor = ref({
   name: '',
   email: '',
   specialization: '',
-  password: 'password'
+  password: 'password' // Initial default passkey for new clinical providers.
 })
 
 /**
- * provisionDoctor - Logic to register a new professional account.
+ * provisionDoctor - Logic to register a new professional account in the system.
+ * Includes validation, sanitization, and a simulated network latency.
  */
 const provisionDoctor = async () => {
   errorMessage.value = ''
+  
+  // 1. Basic empty-field validation.
   if (!newDoctor.value.name || !newDoctor.value.email || !newDoctor.value.specialization) {
     errorMessage.value = 'Complete doctor profile is required.'
     return
   }
+
+  // 2. Email format validation via utility.
   if (!validateEmail(newDoctor.value.email)) {
     errorMessage.value = 'Identity Error: Invalid professional email format.'
     return
   }
 
+  // Trigger loading state.
   isSubmitting.value = true
+  
+  // 3. Simulated API delay to give the user visual feedback.
   setTimeout(() => {
+    // 4. Sanitize inputs before persistent injection into the authStore.
     authStore.provisionDoctor({ 
       ...newDoctor.value,
       name: sanitize(newDoctor.value.name),
       email: sanitize(newDoctor.value.email),
-      specialization: sanitize(newDoctor.value.specialization),
-      status: 'active'
+      specialization: sanitize(newDoctor.value.specialization)
     })
+    
+    // 5. Cleanup UI state and reset form.
     newDoctor.value = { name: '', email: '', specialization: '', password: 'password' }
     isSubmitting.value = false
-    showProvisionModal.value = true
     showProvisionModal.value = false
   }, 800)
 }
 
 /**
- * startEdit - Prepares the UI to modify an existing user's profile.
+ * revokeAccess - Removes a user from the system registry.
+ * Prevents unintentional deletion of other administrators for system stability.
  */
-const startEdit = (user) => {
-  editingUser.value = { ...user }
-  showEditModal.value = true
-}
-
-/**
- * saveUserEdit - Persists modifications to a user's clinical or personal identity.
- */
-const saveUserEdit = async () => {
-  errorMessage.value = ''
-  if (!editingUser.value.name || !editingUser.value.email) {
-    errorMessage.value = 'Profile fields cannot be empty.'
-    return
-  }
-
-  isSubmitting.value = true
-  setTimeout(() => {
-    authStore.updateUser(editingUser.value.id, {
-      name: sanitize(editingUser.value.name),
-      email: sanitize(editingUser.value.email),
-      specialization: editingUser.value.role === 'doctor' ? sanitize(editingUser.value.specialization) : undefined
-    })
-    isSubmitting.value = false
-    showEditModal.value = false
-    editingUser.value = null
-  }, 600)
-}
-
-/**
- * toggleAccess - Flips a user's status between 'active' and 'revoked'.
- */
-const toggleAccess = (user) => {
-  const newStatus = user.status === 'revoked' ? 'active' : 'revoked'
-  authStore.updateStatus(user.id, newStatus)
-}
-
-/**
- * deleteUser - Permanently removes an identity from the system.
- */
-const deleteUser = (user) => {
+const revokeAccess = (user) => {
+  // Guard: Protect administrative accounts from self-deletion or external removal here.
   if (user.role === 'admin') {
     alert('System Administrators cannot be removed.')
     return
   }
   
+  // Confirmation dialog before irreversible action.
   if (confirm(`Permanently revoke access for ${user.name}? This cannot be undone.`)) {
     authStore.deleteUser(user.id)
   }
@@ -183,10 +157,9 @@ const deleteUser = (user) => {
             <thead>
               <tr>
                 <th>System User</th>
-                <th>Specialization / Info</th>
+                <th>Specialization</th>
                 <th>Access Identity</th>
                 <th>Assigned Role</th>
-                <th>Status</th>
                 <th class="text-right">Administration</th>
               </tr>
             </thead>
@@ -212,30 +185,19 @@ const deleteUser = (user) => {
                   <span class="email">{{ user.email }}</span>
                 </td>
                 <td>
+                  <!-- Colored pill indicating the user's role -->
                   <span :class="['role-pill', user.role]">{{ user.role }}</span>
                 </td>
-                <td>
-                  <span :class="['status-pill', user.status || 'active']">
-                    {{ user.status || 'active' }}
-                  </span>
-                </td>
                 <td class="text-right">
-                  <div class="action-buttons" v-if="user.role !== 'admin'">
-                    <button @click="startEdit(user)" class="btn-action edit" title="Edit Profile">
-                      Edit
-                    </button>
-                    <button 
-                      @click="toggleAccess(user)" 
-                      class="btn-action revoke" 
-                      :title="user.status === 'revoked' ? 'Restore Access' : 'Revoke Access'"
-                    >
-                      {{ user.status === 'revoked' ? 'Restore' : 'Revoke' }}
-                    </button>
-                    <button @click="deleteUser(user)" class="btn-action delete" title="Delete Permanently">
-                      Delete
-                    </button>
-                  </div>
-                  <span v-else class="protected-label">System Protected</span>
+                  <!-- Revocation action allowed only for non-admin users -->
+                  <button 
+                    v-if="user.role !== 'admin'" 
+                    @click="revokeAccess(user)" 
+                    class="btn-revoke"
+                  >
+                    Revoke Access
+                  </button>
+                  <span v-else class="protected-label">Protected</span>
                 </td>
               </tr>
             </tbody>
@@ -254,6 +216,7 @@ const deleteUser = (user) => {
           </div>
           
           <form @submit.prevent="provisionDoctor" class="modal-form">
+            <!-- Standardized inputs with built-in validation support via base component -->
             <BaseInput
               id="provision-name"
               v-model="newDoctor.name"
@@ -279,6 +242,7 @@ const deleteUser = (user) => {
               required
             />
 
+            <!-- Auto-generated passkey display (Readonly for security consistency) -->
             <div class="form-group">
               <label for="provision-passkey">Initial Passkey</label>
               <input 
@@ -291,62 +255,16 @@ const deleteUser = (user) => {
               <p class="field-hint">The doctor can change this after their first login.</p>
             </div>
 
+            <!-- Error message feedback area -->
             <div v-if="errorMessage" class="error-msg">
               ⚠️ {{ errorMessage }}
             </div>
 
+            <!-- Modal footer actions -->
             <div class="modal-footer">
               <BaseButton type="button" variant="ghost" @click="showProvisionModal = false">Cancel</BaseButton>
               <BaseButton type="submit" variant="primary" :is-loading="isSubmitting">
                 Confirm Registration
-              </BaseButton>
-            </div>
-          </form>
-        </div>
-      </div>
-    </Transition>
-
-    <!-- EDIT USER MODAL -->
-    <Transition name="fade">
-      <div v-if="showEditModal" class="modal-overlay" @click.self="showEditModal = false">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3>Update User Profile</h3>
-            <button class="close-btn" @click="showEditModal = false">✕</button>
-          </div>
-          
-          <form @submit.prevent="saveUserEdit" class="modal-form">
-            <BaseInput
-              id="edit-name"
-              v-model="editingUser.name"
-              label="Full Name"
-              required
-            />
-
-            <BaseInput
-              id="edit-email"
-              v-model="editingUser.email"
-              label="Contact Email"
-              type="email"
-              required
-            />
-
-            <BaseInput
-              v-if="editingUser.role === 'doctor'"
-              id="edit-specialization"
-              v-model="editingUser.specialization"
-              label="Medical Specialization"
-              required
-            />
-
-            <div v-if="errorMessage" class="error-msg">
-              ⚠️ {{ errorMessage }}
-            </div>
-
-            <div class="modal-footer">
-              <BaseButton type="button" variant="ghost" @click="showEditModal = false">Cancel</BaseButton>
-              <BaseButton type="submit" variant="primary" :is-loading="isSubmitting">
-                Save Changes
               </BaseButton>
             </div>
           </form>
@@ -479,47 +397,22 @@ const deleteUser = (user) => {
   letter-spacing: 0.05em;
 }
 
-.role-pill.admin { background: var(--error-bg); color: #b91c1c; } /* Explicit error red */
-.role-pill.doctor { background: rgba(52, 211, 153, 0.15); color: #047857; }
-.role-pill.patient { background: rgba(59, 130, 246, 0.15); color: var(--primary-dark); }
-
-/* Status pill styling */
-.status-pill {
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  padding: 0.25rem 0.6rem;
-  border-radius: 6px;
-  letter-spacing: 0.05em;
-}
-
-.status-pill.active { background: rgba(52, 211, 153, 0.15); color: #047857; }
-.status-pill.revoked { background: var(--error-bg); color: #b91c1c; }
+.role-pill.admin { background: var(--error-bg); color: var(--error-text); }
+.role-pill.doctor { background: rgba(52, 211, 153, 0.1); color: var(--secondary-main); }
+.role-pill.patient { background: rgba(59, 130, 246, 0.1); color: var(--primary-main); }
 
 .text-right { text-align: right; }
 
-.action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-
-.btn-action {
+.btn-revoke {
   background: none;
   border: none;
+  color: var(--error-text);
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  transition: all 0.2s;
 }
 
-.btn-action.edit { color: var(--primary-main); }
-.btn-action.revoke { color: #f59e0b; }
-.btn-action.delete { color: var(--error-text); }
-
-.btn-action:hover { background: var(--bg-muted); }
+.btn-revoke:hover { text-decoration: underline; }
 
 .protected-label {
   color: var(--text-dim);

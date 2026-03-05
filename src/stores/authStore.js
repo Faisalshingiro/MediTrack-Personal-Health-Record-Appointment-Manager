@@ -116,28 +116,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
-   * updateUser - Modifies an existing user's profile data.
-   */
-  function updateUser(userId, updatedData) {
-    const index = users.value.findIndex(u => u.id === userId)
-    if (index !== -1) {
-      users.value[index] = { ...users.value[index], ...updatedData }
-      persistUsers()
-    }
-  }
-
-  /**
-   * updateStatus - Changes a user's access status (active/revoked).
-   */
-  function updateStatus(userId, status) {
-    const index = users.value.findIndex(u => u.id === userId)
-    if (index !== -1) {
-      users.value[index].status = status
-      persistUsers()
-    }
-  }
-
-  /**
    * persistUsers - Helper utility to sync the registry to localStorage.
    * This acts as the "Save" function for our simulated database.
    */
@@ -166,8 +144,6 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     registerUser,
     provisionDoctor,
-    deleteUser,
-    updateUser,
-    updateStatus
+    deleteUser
   }
 })

@@ -85,9 +85,9 @@ const completeSession = () => {
 const stats = computed(() => {
   const all = myPatientQueue.value
   return [
-    { label: 'Total Patients', value: all.length, color: 'var(--primary-main)' },
-    { label: 'Pending', value: all.filter(a => a.status === 'pending').length, color: '#b45309' },
-    { label: 'Completed Today', value: all.filter(a => a.status === 'completed').length, color: '#047857' }
+    { label: 'Total Patients', value: all.length, color: '#6366f1' },
+    { label: 'Pending', value: all.filter(a => a.status === 'pending').length, color: '#facc15' },
+    { label: 'Completed Today', value: all.filter(a => a.status === 'completed').length, color: '#10b981' }
   ]
 })
 </script>
@@ -125,13 +125,7 @@ const stats = computed(() => {
 
       <!-- Empty state: No patients currently waiting in the clinic queue -->
       <div v-if="myPatientQueue.length === 0" class="empty-placeholder">
-        <svg class="empty-svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-          <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-          <line x1="6" y1="1" x2="6" y2="4"></line>
-          <line x1="10" y1="1" x2="10" y2="4"></line>
-          <line x1="14" y1="1" x2="14" y2="4"></line>
-        </svg>
+        <span>☕</span>
         <p>Your queue is empty. Relax and verify your schedule later.</p>
       </div>
 
@@ -140,7 +134,7 @@ const stats = computed(() => {
         <div v-for="apt in myPatientQueue.slice(0, 4)" :key="apt.id" class="summary-item" :class="{ 'completed-row': apt.status === 'completed' }">
           <div class="patient-info">
             <!-- Small circular avatar for quick identity recognition -->
-            <div class="avatar-small" aria-hidden="true">{{ apt.patientName[0] }}</div>
+            <div class="avatar-small">{{ apt.patientName[0] }}</div>
             <div class="p-details">
               <span class="name">{{ apt.patientName }}</span>
               <span class="time">{{ apt.date }} • {{ apt.time }}</span>
@@ -308,9 +302,9 @@ const stats = computed(() => {
   text-transform: uppercase;
 }
 
-.status-pill.pending { background: rgba(234, 179, 8, 0.15); color: #b45309; }
-.status-pill.approved { background: rgba(59, 130, 246, 0.15); color: var(--primary-dark); }
-.status-pill.completed { background: rgba(16, 185, 129, 0.15); color: #047857; }
+.status-pill.pending { background: rgba(234, 179, 8, 0.1); color: #d97706; }
+.status-pill.approved { background: rgba(59, 130, 246, 0.1); color: var(--primary-main); }
+.status-pill.completed { background: rgba(16, 185, 129, 0.1); color: #059669; }
 
 /* Empty state styling */
 .empty-placeholder {
@@ -319,14 +313,7 @@ const stats = computed(() => {
   color: var(--text-dim);
 }
 
-.empty-svg {
-  width: 54px;
-  height: 54px;
-  display: block;
-  margin: 0 auto 1.5rem;
-  color: var(--text-dim);
-  opacity: 0.15;
-}
+.empty-placeholder span { font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.3; }
 
 .card-action-footer {
   margin-top: 1.5rem;

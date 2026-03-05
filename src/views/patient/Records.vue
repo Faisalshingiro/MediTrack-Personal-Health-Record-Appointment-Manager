@@ -86,7 +86,7 @@ const deleteRecord = (id) => {
       -->
       <div class="records-header">
         <div class="header-info">
-          <h2>Health Timeline</h2>
+          <h3>Health Timeline</h3>
           <p>Your complete clinical history and personal health logs.</p>
         </div>
         <BaseButton @click="showModal = true" variant="primary">
@@ -101,9 +101,7 @@ const deleteRecord = (id) => {
       <div class="timeline">
         <!-- Empty State UI: Displayed for new users with no clinical history -->
         <div v-if="myRecords.length === 0" class="empty-records">
-          <svg class="empty-svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-          </svg>
+          <div class="empty-icon">📁</div>
           <h4>No records available yet</h4>
           <p>This is where your medical history and health logs will appear. Start by adding a personal note.</p>
           <BaseButton variant="ghost" @click="showModal = true">Log My First Health Note</BaseButton>
@@ -125,14 +123,11 @@ const deleteRecord = (id) => {
               <div class="record-top">
                 <!-- Data Source Indicator: Clinical (Doctor-issued) vs Personal (Self-recorded) -->
                 <div class="record-type-badge" :class="record.type">
-                  <span aria-hidden="true">{{ record.type === 'consultation' ? '🩺' : '📝' }}</span>
-                  {{ record.type === 'consultation' ? ' Clinical' : ' Personal' }}
+                  {{ record.type === 'consultation' ? '🩺 Clinical' : '📝 Personal' }}
                 </div>
                 <div class="record-actions">
                   <!-- Entry deletion control -->
-                  <button @click="deleteRecord(record.id)" class="btn-delete" aria-label="Delete record">
-                    <span aria-hidden="true">🗑️</span>
-                  </button>
+                  <button @click="deleteRecord(record.id)" class="btn-delete" title="Delete record">🗑️</button>
                 </div>
               </div>
               <h4 class="record-title">{{ record.title }}</h4>
@@ -218,13 +213,10 @@ const deleteRecord = (id) => {
   padding: 4rem 2rem;
 }
 
-.empty-svg {
-  width: 54px;
-  height: 54px;
-  display: block;
-  margin: 0 auto 1.5rem;
-  color: var(--text-dim);
-  opacity: 0.15;
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.2;
 }
 
 /* TIMELINE GEOMETRY: Vertical alignment of markers and cards */

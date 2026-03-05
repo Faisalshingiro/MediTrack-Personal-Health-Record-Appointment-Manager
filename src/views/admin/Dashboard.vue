@@ -33,14 +33,14 @@ const systemStats = computed(() => [
     label: 'Clinical Visits', 
     value: appointmentStore.appointments.length, 
     icon: '📅', 
-    color: 'var(--stat-completed)', 
+    color: '#059669', 
     path: '/admin/logs' 
   },
   { 
     label: 'Awaiting Approval', 
     value: appointmentStore.appointments.filter(a => a.status === 'pending').length, 
     icon: '⌛', 
-    color: 'var(--stat-pending)', 
+    color: '#d97706', 
     path: '/admin/logs' 
   },
   { 
@@ -290,13 +290,13 @@ const recentActivity = computed(() => {
 }
 
 /* Module-specific icon colors */
-.action-icon.user { background: var(--bg-muted); color: var(--error-text); }
-.action-icon.log { background: var(--bg-muted); color: var(--primary-main); }
+.action-icon.user { background: var(--bg-muted); color: #ef4444; }
+.action-icon.log { background: var(--bg-muted); color: #ec4899; }
 
 .action-text { flex: 1; }
 .action-title { display: block; font-weight: 700; font-size: 1.1rem; }
 .action-desc { font-size: 0.85rem; color: var(--text-dim); }
-.action-arrow { color: var(--primary-main); opacity: 0.9; font-size: 1.25rem; font-weight: 800; }
+.action-arrow { color: var(--text-dim); opacity: 0.5; font-size: 1.25rem; }
 
 /* TRAFFIC LIST: Vertical list of scheduled events */
 .traffic-list {

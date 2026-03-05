@@ -147,12 +147,7 @@ const closeModal = () => {
 
         <!-- Empty State UI -->
         <div v-if="myQueue.length === 0" class="empty-state">
-          <svg class="empty-svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
+          <span>👥</span>
           <p>No patients currently in your queue.</p>
         </div>
 
@@ -228,12 +223,9 @@ const closeModal = () => {
             <div class="note-header">
               <span class="note-date">{{ record.date }}</span>
               <div class="note-actions">
-                <button @click="openEditNote(record)" class="btn-edit" aria-label="Edit Note">
-                  <span aria-hidden="true">✏️</span>
-                </button>
-                <button @click="deleteNote(record.id)" class="btn-delete" aria-label="Delete Note">
-                  <span aria-hidden="true">🗑️</span>
-                </button>
+                <!-- Action keys for record revision and deletion -->
+                <button @click="openEditNote(record)" class="btn-edit" title="Edit Note">✏️</button>
+                <button @click="deleteNote(record.id)" class="btn-delete" title="Delete Note">🗑️</button>
               </div>
             </div>
             <h4 class="note-patient">{{ record.patientName }}</h4>
@@ -313,14 +305,7 @@ const closeModal = () => {
   color: var(--text-dim);
 }
 
-.empty-svg {
-  width: 48px;
-  height: 48px;
-  display: block;
-  margin: 0 auto 1.25rem;
-  color: var(--text-dim);
-  opacity: 0.15;
-}
+.empty-state span { font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.2; }
 
 .table-wrapper {
   overflow-x: auto;
@@ -393,10 +378,10 @@ const closeModal = () => {
   text-transform: uppercase;
 }
 
-.status-pill.pending { background: rgba(234, 179, 8, 0.15); color: #b45309; }
-.status-pill.approved { background: rgba(59, 130, 246, 0.15); color: var(--primary-dark); }
-.status-pill.completed { background: rgba(16, 185, 129, 0.15); color: #047857; }
-.status-pill.cancelled { background: rgba(239, 68, 68, 0.15); color: #b91c1c; }
+.status-pill.pending { background: rgba(234, 179, 8, 0.1); color: #d97706; }
+.status-pill.approved { background: rgba(59, 130, 246, 0.1); color: var(--primary-main); }
+.status-pill.completed { background: rgba(16, 185, 129, 0.1); color: #059669; }
+.status-pill.cancelled { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
 .text-right { text-align: right; }
 .done-label { color: #10b981; font-weight: 700; font-size: 0.85rem; }
 
