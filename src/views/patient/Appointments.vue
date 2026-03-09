@@ -143,7 +143,12 @@ const cancelAppointment = (id) => {
 
         <!-- Empty State UI: Displayed when no clinical timeline exists for the user -->
         <div v-if="myAppointments.length === 0" class="empty-state">
-          <div class="empty-icon">📅</div>
+          <svg class="empty-svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
           <h4>No appointments yet</h4>
           <p>You haven't scheduled any consultations. Click the button above to book your first visit.</p>
           <BaseButton variant="ghost" @click="openBookModal">Book Now</BaseButton>
@@ -154,7 +159,7 @@ const cancelAppointment = (id) => {
           <div v-for="apt in myAppointments" :key="apt.id" class="appointment-item">
             <div class="apt-main">
               <!-- Visual indicator for visit type -->
-              <div class="apt-icon">🩺</div>
+              <div class="apt-icon" aria-hidden="true">🩺</div>
               <div class="apt-details">
                 <span class="doctor-name">{{ apt.doctor }}</span>
                 <div class="apt-meta">
@@ -171,8 +176,12 @@ const cancelAppointment = (id) => {
               <span :class="['status-pill', apt.status]">{{ apt.status }}</span>
               <div class="btn-group">
                 <!-- Revision and Deletion keys -->
-                <button @click="openEditModal(apt)" class="btn-icon edit" title="Edit Appointment">✏️</button>
-                <button @click="cancelAppointment(apt.id)" class="btn-icon delete" title="Cancel Appointment">✕</button>
+                <button @click="openEditModal(apt)" class="btn-icon edit" aria-label="Edit Appointment">
+                  <span aria-hidden="true">✏️</span>
+                </button>
+                <button @click="cancelAppointment(apt.id)" class="btn-icon delete" aria-label="Cancel Appointment">
+                  <span aria-hidden="true">✕</span>
+                </button>
               </div>
             </div>
           </div>
@@ -271,12 +280,6 @@ const cancelAppointment = (id) => {
   padding: 4rem 2rem;
 }
 
-.empty-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.2;
-}
-
 .empty-state h4 {
   margin: 0 0 0.5rem;
   font-size: 1.25rem;
@@ -286,6 +289,15 @@ const cancelAppointment = (id) => {
   color: var(--text-dim, #64748b);
   max-width: 300px;
   margin: 0 auto 1.5rem;
+}
+
+.empty-svg {
+  width: 56px;
+  height: 56px;
+  display: block;
+  margin: 0 auto 1.5rem;
+  color: var(--text-dim) !important;
+  opacity: 0.15;
 }
 
 /* APPOINTMENT REGISTRY List Styling */
@@ -299,7 +311,7 @@ const cancelAppointment = (id) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem; /* Tightened from 1.5rem */
+  padding: 1.25rem;
   background: var(--bg-faint, #f8fafc);
   border: 1px solid var(--bg-muted, #f1f5f9);
   border-radius: 12px;
@@ -369,9 +381,9 @@ const cancelAppointment = (id) => {
   letter-spacing: 0.05em;
 }
 
-.status-pill.pending { background: rgba(234, 179, 8, 0.1); color: #d97706; }
-.status-pill.approved { background: rgba(59, 130, 246, 0.1); color: var(--primary-main); }
-.status-pill.completed { background: rgba(16, 185, 129, 0.1); color: #059669; }
+.status-pill.pending { background: rgba(234, 179, 8, 0.15); color: #b45309; }
+.status-pill.approved { background: rgba(59, 130, 246, 0.15); color: var(--primary-dark); }
+.status-pill.completed { background: rgba(16, 185, 129, 0.15); color: #047857; }
 
 /* REVISION CONTROLS: Standard minimalist icons */
 .btn-group {

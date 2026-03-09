@@ -77,9 +77,8 @@ defineProps({
 
 /* PRIMARY: Used for the most important system actions (e.g., Save, Book) */
 .primary {
-  background: var(--primary-main);
-  color: var(--on-primary);
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+  background: var(--primary-main) !important;
+  color: var(--on-primary) !important;
 }
 .primary:hover {
   background: var(--primary-dark);

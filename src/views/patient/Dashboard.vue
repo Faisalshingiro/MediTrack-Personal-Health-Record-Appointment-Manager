@@ -135,10 +135,10 @@ const stats = computed(() => [
     <div class="stats-overview">
       <BaseCard v-for="stat in stats" :key="stat.label" class="stat-card">
         <div class="stat-content">
-          <span class="stat-icon">{{ stat.icon }}</span>
+          <span class="stat-icon" aria-hidden="true">{{ stat.icon }}</span>
           <div class="stat-info">
-            <p class="stat-label">{{ stat.label }}</p>
-            <h3 class="stat-value">{{ stat.value }}</h3>
+            <h3 class="stat-label">{{ stat.label }}</h3>
+            <div class="stat-value">{{ stat.value }}</div>
           </div>
         </div>
       </BaseCard>
@@ -163,17 +163,22 @@ const stats = computed(() => [
 
         <!-- Empty state fallback if the patient has no active schedule -->
         <div v-if="myAppointments.length === 0" class="empty-placeholder">
-          <span class="empty-icon">📅</span>
+          <svg class="empty-svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
           <p>No upcoming visits scheduled.</p>
           <div class="empty-actions">
-            <BaseButton variant="ghost" size="sm" @click="showBookModal = true">Book now</BaseButton>
+            <BaseButton variant="primary" size="sm" @click="showBookModal = true" aria-label="Book an appointment now">Book now</BaseButton>
           </div>
         </div>
 
         <!-- High-density list of the next 3 visits -->
         <div v-else class="data-list">
           <div v-for="apt in myAppointments.slice(0, 3)" :key="apt.id" class="data-item">
-            <div class="item-visual">🩺</div>
+            <div class="item-visual" aria-hidden="true">🩺</div>
             <div class="item-info">
               <p class="item-title">{{ apt.doctor }}</p>
               <p class="item-sub">{{ apt.date }} • {{ apt.time }}</p>
@@ -191,14 +196,17 @@ const stats = computed(() => [
         <template #header>
           <div class="section-header">
             <h2>Health Records</h2>
-            <BaseButton @click="showRecordModal = true" size="sm" variant="secondary">
+            <BaseButton @click="showRecordModal = true" size="sm" variant="primary">
               Add Note
             </BaseButton>
           </div>
         </template>
 
         <div v-if="myRecords.length === 0" class="empty-placeholder">
-          <span class="empty-icon">📝</span>
+          <svg class="empty-svg" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
           <p>Your health timeline is empty.</p>
         </div>
 
@@ -392,11 +400,15 @@ const stats = computed(() => [
   color: var(--text-dim);
 }
 
-.empty-icon {
-  font-size: 2.5rem;
+.empty-placeholder p { margin: 0; font-weight: 600; }
+
+.empty-svg {
+  width: 48px;
+  height: 48px;
   display: block;
-  margin-bottom: 1rem;
-  opacity: 0.2;
+  margin: 0 auto 1.25rem;
+  color: var(--text-dim);
+  opacity: 0.15;
 }
 
 /* RECORD CARDS: Sub-summary style for long-form note previews */

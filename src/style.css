@@ -2,24 +2,22 @@
 
 :root {
   /* CLINICAL COLOR PALETTE */
-  --primary-main: #026694;
-  /* Darker blue for AA contrast on various backgrounds */
-  /* Darkened to pass AA on white */
-  --primary-dark: #014d70;
+  --primary-main: #014d70;
+  /* Deeper blue for safe contrast AA/AAA */
+  --primary-dark: #003650;
   --primary-light: #e0f2fe;
-
-  --secondary-main: #059669;
-  /* Darker green for AA */
+  --secondary-main: #047857;
+  /* Deeper green */
 
   --bg-pure: #ffffff;
   --bg-faint: #f8fafc;
   --bg-muted: #f1f5f9;
 
   --text-main: #0f172a;
-  --text-dim: #334155;
-  /* 7.1:1 contrast on white - Safe AA */
-  --text-light: #475569;
-  /* 4.54:1 contrast on white - Minimum AA */
+  --text-dim: #1e293b;
+  /* Darkened for better contrast */
+  --text-light: #334155;
+  /* Darkened to safely pass WCAG AA */
   --on-primary: #ffffff;
   /* Text color on primary background */
   /* Darkened for accessibility */
@@ -58,11 +56,12 @@
   --bg-faint: #020617;
   --bg-muted: #1e293b;
 
-  --text-main: #f1f5f9;
-  --text-dim: #cbd5e1;
-  /* Lightened for accessibility */
+  --text-main: #f8fafc;
+  /* Brighter for dark mode */
+  --text-dim: #e2e8f0;
+  /* Lighter for visibility */
   --text-light: #94a3b8;
-  /* Lightened for accessibility */
+  /* Balanced for secondary info */
 
   --glass: rgba(15, 23, 42, 0.8);
   --glass-border: rgba(96, 165, 250, 0.2);
