@@ -271,6 +271,21 @@ const scrollToSection = (id) => {
   box-shadow: var(--shadow-md);
 }
 
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 2rem;
+  letter-spacing: -0.04em;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
+
 /* Gradient typography for the primary heading */
 .clinical-text {
   background: linear-gradient(135deg, var(--primary-main), #0369a1);
@@ -286,6 +301,31 @@ const scrollToSection = (id) => {
   margin: 0 auto 4rem;
   line-height: 1.6;
   font-weight: 700;
+}
+
+/* FEATURES SECTION */
+.features-section {
+  padding: 6rem 0;
+  background: var(--bg-faint);
+}
+
+.section-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 4rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  font-weight: 600;
 }
 
 /* FEATURE GRID: Responsive multi-column layout for portal highlights */
@@ -319,8 +359,8 @@ const scrollToSection = (id) => {
 /* Standardized footer for legal compliance and support navigation */
 .footer {
   background: var(--bg-pure);
-  padding: 2.5rem 0;
-  border-top: 1px solid var(--primary-light);
+  padding: 4rem 0;
+  border-top: 1px solid var(--bg-muted);
 }
 
 .simple-footer-content {
@@ -329,16 +369,29 @@ const scrollToSection = (id) => {
   align-items: center;
 }
 
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer-logo-minimal {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+
 .copyright {
   color: var(--text-dim);
   font-size: 0.9rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .footer-right {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .footer-link {
@@ -347,6 +400,10 @@ const scrollToSection = (id) => {
   font-weight: 700;
   text-decoration: none;
   transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--primary-main);
 }
 
 .footer-divider {
@@ -362,7 +419,11 @@ const scrollToSection = (id) => {
 
 @media (max-width: 768px) {
   .hero { padding: 12rem 1.5rem 8rem; }
+  .hero-title { font-size: 2.5rem; }
+  .hero-actions { flex-direction: column; width: 100%; max-width: 300px; margin: 0 auto; }
   .nav-links { gap: 1rem; }
-  .simple-footer-content { flex-direction: column; gap: 1.5rem; }
+  .simple-footer-content { flex-direction: column; gap: 2rem; text-align: center; }
+  .footer-left { flex-direction: column; gap: 1rem; }
+  .footer-right { gap: 1rem; flex-wrap: wrap; justify-content: center; }
 }
 </style>
