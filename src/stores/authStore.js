@@ -17,9 +17,9 @@ export const useAuthStore = defineStore('auth', () => {
   // --- PERSISTENT USER REGISTRY ---
   // These are the seed accounts included by default when the application starts for the first time.
   const defaultUsers = [
-    { id: 'admin-0', name: 'System Admin', email: 'admin@medi.com', password: 'admin', role: 'admin' },
-    { id: 'doc-0', name: 'Dr. Sarah Smith', email: 'doctor@medi.com', password: 'password', role: 'doctor', specialization: 'General Consultation' },
-    { id: 'pat-0', name: 'John Patient', email: 'patient@medi.com', password: 'password', role: 'patient' }
+    { id: 'admin-0', name: 'System Admin', email: 'admin@medi.com', password: 'admin', role: 'admin', status: 'active' },
+    { id: 'doc-0', name: 'Dr. Sarah Smith', email: 'doctor@medi.com', password: 'password', role: 'doctor', specialization: 'General Consultation', status: 'active' },
+    { id: 'pat-0', name: 'John Patient', email: 'patient@medi.com', password: 'password', role: 'patient', status: 'active' }
   ]
 
   // Initialize the users list from localStorage if available; otherwise, use the default accounts.
@@ -42,7 +42,8 @@ export const useAuthStore = defineStore('auth', () => {
     const newUser = {
       ...userData,
       id: `pat-${Date.now()}`, // Generate unique ID based on timestamp
-      role: 'patient' // Force patient role for self-registration
+      role: 'patient', // Force patient role for self-registration
+      status: 'active' // Set default status to active
     }
     // Add the new user to the reactive state list
     users.value.push(newUser)
@@ -59,7 +60,8 @@ export const useAuthStore = defineStore('auth', () => {
     const newDoc = {
       ...doctorData,
       id: `doc-${Date.now()}`, // Generate unique clinic ID
-      role: 'doctor' // Assign the professional doctor role
+      role: 'doctor', // Assign the professional doctor role
+      status: 'active' // Set default status to active
     }
     // Inject the new provider into the system registry
     users.value.push(newDoc)
@@ -78,6 +80,11 @@ export const useAuthStore = defineStore('auth', () => {
 
     // If a valid user is found, establish a session
     if (user) {
+      // Check if user account has been revoked
+      if (user.status === 'revoked') {
+        return { success: false, message: 'Your access has been revoked. Please contact the administrator.' }
+      }
+
       // Set the session state in the store
       currentUser.value = { id: user.id, name: user.name, email: user.email }
       role.value = user.role
@@ -116,6 +123,33 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+   * updateUser - Modifies an existing user's profile.
+   */
+  function updateUser(userId, updatedData) {
+    const index = users.value.findIndex(u => u.id === userId)
+    if (index !== -1) {
+      users.value[index] = { ...users.value[index], ...updatedData }
+      persistUsers()
+      return { success: true }
+    }
+    return { success: false, message: 'Identity not found in registry.' }
+  }
+
+  /**
+   * toggleUserAccess - Revokes or restores system access for a user.
+   */
+  function toggleUserAccess(userId) {
+    const index = users.value.findIndex(u => u.id === userId)
+    if (index !== -1) {
+      const currentStatus = users.value[index].status || 'active'
+      users.value[index].status = currentStatus === 'active' ? 'revoked' : 'active'
+      persistUsers()
+      return { success: true, status: users.value[index].status }
+    }
+    return { success: false, message: 'Identity not found in registry.' }
+  }
+
+  /**
    * persistUsers - Helper utility to sync the registry to localStorage.
    * This acts as the "Save" function for our simulated database.
    */
@@ -144,6 +178,8 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     registerUser,
     provisionDoctor,
-    deleteUser
+    deleteUser,
+    updateUser,
+    toggleUserAccess
   }
 })

@@ -118,16 +118,6 @@ const handleLogin = async () => {
       </form>
     </div>
 
-    <!-- 
-      DEVELOPER/ADMIN HINT: 
-      Visible only during development or for testing convenience to show seed credentials.
-    -->
-    <div class="debug-hint">
-       <p><strong>Clinical Access Guide:</strong></p>
-       <p>Admin: admin@medi.com / admin</p>
-       <p>Doctor: doctor@medi.com / password</p>
-       <p>Patient: patient@medi.com / password</p>
-    </div>
   </div>
 </template>
 
@@ -230,18 +220,7 @@ const handleLogin = async () => {
   transition: color 0.2s;
 }
 
-/* Debug panel for seed data reference */
-.debug-hint {
-   margin-top: 3rem;
-   padding: 1.5rem;
-   background: var(--bg-pure);
-   border: 1px dashed var(--primary-main);
-   border-radius: 12px;
-   font-size: 0.8rem;
-   color: var(--text-dim);
-   text-align: center;
-   line-height: 1.6;
-}
+
 
 @media (max-width: 640px) {
   .auth-card { padding: 2rem; }
