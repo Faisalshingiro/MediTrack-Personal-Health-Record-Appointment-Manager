@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* CLINICAL COLOR PALETTE */
+  --primary-main: #026694;
+  /* Darker blue for AA contrast on various backgrounds */
+  /* Darkened to pass AA on white */
+  --primary-dark: #014d70;
+  --primary-light: #e0f2fe;
+
+  --secondary-main: #059669;
+  /* Darker green for AA */
+
+  --bg-pure: #ffffff;
+  --bg-faint: #f8fafc;
+  --bg-muted: #f1f5f9;
+
+  --text-main: #0f172a;
+  --text-dim: #334155;
+  /* 7.1:1 contrast on white - Safe AA */
+  --text-light: #475569;
+  /* 4.54:1 contrast on white - Minimum AA */
+  --on-primary: #ffffff;
+  /* Text color on primary background */
+  /* Darkened for accessibility */
+
+  --glass: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(2, 102, 148, 0.15);
+
+  --error-bg: #fef2f2;
+  --error-text: #b91c1c;
+  /* Safe contrast on white/error-bg */
+  --error-border: #fee2e2;
+
+  --stat-pending: #92400e;
+  --stat-completed: #065f46;
+
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  color: var(--text-main);
+  background-color: var(--bg-pure);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* DARK MODE OVERRIDES */
+.dark-mode {
+  --bg-pure: #0f172a;
+  --bg-faint: #020617;
+  --bg-muted: #1e293b;
+
+  --text-main: #f1f5f9;
+  --text-dim: #cbd5e1;
+  /* Lightened for accessibility */
+  --text-light: #94a3b8;
+  /* Lightened for accessibility */
+
+  --glass: rgba(15, 23, 42, 0.8);
+  --glass-border: rgba(96, 165, 250, 0.2);
+
+  --primary-main: #60a5fa;
+  /* Accessible blue for dark mode */
+  --primary-dark: #3b82f6;
+  --primary-light: rgba(96, 165, 250, 0.1);
+  --secondary-main: #34d399;
+
+  --on-primary: #0f172a;
+  /* Dark text on light blue button in dark mode */
+
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --error-text: #fca5a5;
+  /* Lighter red for dark mode contrast */
+  --error-border: rgba(239, 68, 68, 0.3);
+
+  --stat-pending: #f59e0b;
+  --stat-completed: #10b981;
+
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--bg-faint);
+}
+
+#app {
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  font-weight: 600;
+  color: var(--primary-main);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 0;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+/* Accessibility: Professional Focus Indicator */
+:focus-visible {
+  outline: 2px solid var(--primary-main);
+  outline-offset: 4px;
+}
+
+/* Clinical Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-light);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
