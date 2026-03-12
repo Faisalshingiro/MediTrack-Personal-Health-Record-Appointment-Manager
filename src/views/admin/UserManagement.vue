@@ -157,9 +157,10 @@ const revokeAccess = (user) => {
             <thead>
               <tr>
                 <th>System User</th>
-                <th>Specialization</th>
+                <th>Specialization / Info</th>
                 <th>Access Identity</th>
                 <th>Assigned Role</th>
+                <th>Status</th>
                 <th class="text-right">Administration</th>
               </tr>
             </thead>
@@ -185,19 +186,30 @@ const revokeAccess = (user) => {
                   <span class="email">{{ user.email }}</span>
                 </td>
                 <td>
-                  <!-- Colored pill indicating the user's role -->
                   <span :class="['role-pill', user.role]">{{ user.role }}</span>
                 </td>
+                <td>
+                  <span :class="['status-pill', user.status || 'active']">
+                    {{ user.status || 'active' }}
+                  </span>
+                </td>
                 <td class="text-right">
-                  <!-- Revocation action allowed only for non-admin users -->
-                  <button 
-                    v-if="user.role !== 'admin'" 
-                    @click="revokeAccess(user)" 
-                    class="btn-revoke"
-                  >
-                    Revoke Access
-                  </button>
-                  <span v-else class="protected-label">Protected</span>
+                  <div class="action-buttons" v-if="user.role !== 'admin'">
+                    <button @click="startEdit(user)" class="btn-action edit" title="Edit Profile">
+                      Edit
+                    </button>
+                    <button 
+                      @click="toggleAccess(user)" 
+                      class="btn-action revoke" 
+                      :title="user.status === 'revoked' ? 'Restore Access' : 'Revoke Access'"
+                    >
+                      {{ user.status === 'revoked' ? 'Restore' : 'Revoke' }}
+                    </button>
+                    <button @click="deleteUser(user)" class="btn-action delete" title="Delete Permanently">
+                      Delete
+                    </button>
+                  </div>
+                  <span v-else class="protected-label">System Protected</span>
                 </td>
               </tr>
             </tbody>
@@ -216,7 +228,6 @@ const revokeAccess = (user) => {
           </div>
           
           <form @submit.prevent="provisionDoctor" class="modal-form">
-            <!-- Standardized inputs with built-in validation support via base component -->
             <BaseInput
               id="provision-name"
               v-model="newDoctor.name"
@@ -242,7 +253,6 @@ const revokeAccess = (user) => {
               required
             />
 
-            <!-- Auto-generated passkey display (Readonly for security consistency) -->
             <div class="form-group">
               <label for="provision-passkey">Initial Passkey</label>
               <input 
@@ -255,16 +265,62 @@ const revokeAccess = (user) => {
               <p class="field-hint">The doctor can change this after their first login.</p>
             </div>
 
-            <!-- Error message feedback area -->
             <div v-if="errorMessage" class="error-msg">
               ⚠️ {{ errorMessage }}
             </div>
 
-            <!-- Modal footer actions -->
             <div class="modal-footer">
               <BaseButton type="button" variant="ghost" @click="showProvisionModal = false">Cancel</BaseButton>
               <BaseButton type="submit" variant="primary" :is-loading="isSubmitting">
                 Confirm Registration
+              </BaseButton>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- EDIT USER MODAL -->
+    <Transition name="fade">
+      <div v-if="showEditModal" class="modal-overlay" @click.self="showEditModal = false">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Update User Profile</h3>
+            <button class="close-btn" @click="showEditModal = false">✕</button>
+          </div>
+          
+          <form @submit.prevent="saveUserEdit" class="modal-form">
+            <BaseInput
+              id="edit-name"
+              v-model="editingUser.name"
+              label="Full Name"
+              required
+            />
+
+            <BaseInput
+              id="edit-email"
+              v-model="editingUser.email"
+              label="Contact Email"
+              type="email"
+              required
+            />
+
+            <BaseInput
+              v-if="editingUser.role === 'doctor'"
+              id="edit-specialization"
+              v-model="editingUser.specialization"
+              label="Medical Specialization"
+              required
+            />
+
+            <div v-if="errorMessage" class="error-msg">
+              ⚠️ {{ errorMessage }}
+            </div>
+
+            <div class="modal-footer">
+              <BaseButton type="button" variant="ghost" @click="showEditModal = false">Cancel</BaseButton>
+              <BaseButton type="submit" variant="primary" :is-loading="isSubmitting">
+                Save Changes
               </BaseButton>
             </div>
           </form>
@@ -397,22 +453,47 @@ const revokeAccess = (user) => {
   letter-spacing: 0.05em;
 }
 
-.role-pill.admin { background: var(--error-bg); color: var(--error-text); }
-.role-pill.doctor { background: rgba(52, 211, 153, 0.1); color: var(--secondary-main); }
-.role-pill.patient { background: rgba(59, 130, 246, 0.1); color: var(--primary-main); }
+.role-pill.admin { background: var(--error-bg); color: #b91c1c; } /* Explicit error red */
+.role-pill.doctor { background: rgba(52, 211, 153, 0.15); color: #047857; }
+.role-pill.patient { background: rgba(59, 130, 246, 0.15); color: var(--primary-dark); }
+
+/* Status pill styling */
+.status-pill {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+
+.status-pill.active { background: rgba(52, 211, 153, 0.15); color: #047857; }
+.status-pill.revoked { background: var(--error-bg); color: #b91c1c; }
 
 .text-right { text-align: right; }
 
-.btn-revoke {
-  background: none;
-  border: none;
-  color: var(--error-text);
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
 
-.btn-revoke:hover { text-decoration: underline; }
+.btn-action {
+  background: none;
+  border: none;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-action.edit { color: var(--primary-main); }
+.btn-action.revoke { color: #f59e0b; }
+.btn-action.delete { color: var(--error-text); }
+
+.btn-action:hover { background: var(--bg-muted); }
 
 .protected-label {
   color: var(--text-dim);
