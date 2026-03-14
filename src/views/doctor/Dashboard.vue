@@ -86,8 +86,8 @@ const stats = computed(() => {
   const all = myPatientQueue.value
   return [
     { label: 'Total Patients', value: all.length, color: 'var(--primary-main)' },
-    { label: 'Pending', value: all.filter(a => a.status === 'pending').length, color: 'var(--stat-pending)' },
-    { label: 'Completed Today', value: all.filter(a => a.status === 'completed').length, color: 'var(--stat-completed)' }
+    { label: 'Pending', value: all.filter(a => a.status === 'pending').length, color: '#b45309' },
+    { label: 'Completed Today', value: all.filter(a => a.status === 'completed').length, color: '#047857' }
   ]
 })
 </script>
