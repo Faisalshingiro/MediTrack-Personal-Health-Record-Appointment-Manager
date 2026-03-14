@@ -33,14 +33,14 @@ const systemStats = computed(() => [
     label: 'Clinical Visits', 
     value: appointmentStore.appointments.length, 
     icon: '📅', 
-    color: 'var(--stat-completed)', 
+    color: '#059669', 
     path: '/admin/logs' 
   },
   { 
     label: 'Awaiting Approval', 
     value: appointmentStore.appointments.filter(a => a.status === 'pending').length, 
     icon: '⌛', 
-    color: 'var(--stat-pending)', 
+    color: '#d97706', 
     path: '/admin/logs' 
   },
   { 
@@ -238,12 +238,13 @@ const recentActivity = computed(() => {
   gap: 1rem;
 }
 
-.card-header h2 { margin: 0; font-size: 1.25rem; }
+.card-header h2 { margin: 0; font-size: 1.25rem; font-weight: 800; }
 .subtitle {
-  color: var(--text-dim);
-  font-size: 0.9rem;
-  margin: 0.25rem 0 0;
-  font-weight: 600;
+  color: var(--text-dim); /* High contrast clinical descriptions */
+  font-size: 0.85rem;
+  margin: 0.15rem 0 0;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 /* ACTION LINKS: Styled navigation blocks */
@@ -290,13 +291,13 @@ const recentActivity = computed(() => {
 }
 
 /* Module-specific icon colors */
-.action-icon.user { background: var(--bg-muted); color: var(--error-text); }
-.action-icon.log { background: var(--bg-muted); color: var(--primary-main); }
+.action-icon.user { background: var(--bg-muted); color: #ef4444; }
+.action-icon.log { background: var(--bg-muted); color: #ec4899; }
 
 .action-text { flex: 1; }
-.action-title { display: block; font-weight: 700; font-size: 1.1rem; }
-.action-desc { font-size: 0.85rem; color: var(--text-dim); }
-.action-arrow { color: var(--primary-main); opacity: 0.9; font-size: 1.25rem; font-weight: 800; }
+.action-title { display: block; font-weight: 800; font-size: 1.05rem; }
+.action-desc { font-size: 0.85rem; color: var(--text-dim); font-weight: 700; opacity: 0.95; }
+.action-arrow { color: var(--primary-main); font-size: 1.25rem; }
 
 /* TRAFFIC LIST: Vertical list of scheduled events */
 .traffic-list {
@@ -339,9 +340,9 @@ const recentActivity = computed(() => {
   letter-spacing: 0.05em;
 }
 
-.status-pill-sm.pending { background: rgba(234, 179, 8, 0.1); color: #d97706; }
-.status-pill-sm.approved { background: rgba(59, 130, 246, 0.1); color: var(--primary-main); }
-.status-pill-sm.completed { background: rgba(16, 185, 129, 0.1); color: #059669; }
+.status-pill-sm.pending { background: rgba(234, 179, 8, 0.15); color: #b45309; } /* Darkened for accessibility */
+.status-pill-sm.approved { background: rgba(59, 130, 246, 0.15); color: var(--primary-dark); }
+.status-pill-sm.completed { background: rgba(16, 185, 129, 0.15); color: #047857; }
 
 /* Responsive adjustments for mid-sized screens */
 @media (max-width: 900px) {

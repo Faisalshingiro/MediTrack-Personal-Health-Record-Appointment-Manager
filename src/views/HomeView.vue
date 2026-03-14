@@ -184,7 +184,7 @@ const scrollToSection = (id) => {
   padding: 0.75rem 0;
   background: var(--glass);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--primary-light);
   box-shadow: 0 4px 20px rgba(2, 132, 199, 0.05);
 }
 
@@ -197,20 +197,12 @@ const scrollToSection = (id) => {
   align-items: center;
 }
 
-.nav-brand {
-  display: flex;
-  align-items: center;
-}
-
 .brand-logo-img {
-  max-height: 80px;
+  height: 90px;
   width: auto;
   object-fit: contain;
-  transition: var(--transition-smooth);
-}
-
-.brand-logo-img:hover {
-  transform: scale(1.02);
+  margin-top: -10px;
+  margin-bottom: -10px;
 }
 
 .nav-links {
@@ -244,10 +236,6 @@ const scrollToSection = (id) => {
   font-size: 1rem;
   transition: all 0.2s;
   text-decoration: none;
-}
-
-.nav-item:hover {
-  color: var(--primary-main);
 }
 
 /* HERO: Eye-catching gradients and massive typography */
@@ -288,7 +276,14 @@ const scrollToSection = (id) => {
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 2rem;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 /* Gradient typography for the primary heading */
@@ -308,27 +303,23 @@ const scrollToSection = (id) => {
   font-weight: 700;
 }
 
-.hero-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-}
-
-/* FEATURE GRID: Responsive multi-column layout for portal highlights */
+/* FEATURES SECTION */
 .features-section {
-  padding: 10rem 0;
+  padding: 6rem 0;
   background: var(--bg-faint);
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: 5rem;
+  max-width: 700px;
+  margin: 0 auto 4rem;
 }
 
 .section-title {
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 1rem;
+  letter-spacing: -0.02em;
 }
 
 .section-subtitle {
@@ -337,6 +328,7 @@ const scrollToSection = (id) => {
   font-weight: 600;
 }
 
+/* FEATURE GRID: Responsive multi-column layout for portal highlights */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -344,7 +336,7 @@ const scrollToSection = (id) => {
 }
 
 .feature-card {
-  background: var(--bg-pure);
+  background: var(--bg-faint);
   padding: 3rem 2.5rem;
   border-radius: 24px;
   border: 1px solid var(--glass-border);
@@ -352,6 +344,7 @@ const scrollToSection = (id) => {
 }
 
 .feature-card:hover {
+  background: var(--bg-pure);
   transform: translateY(-10px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
   border-color: var(--primary-main);
@@ -359,49 +352,15 @@ const scrollToSection = (id) => {
 
 /* Highlighting the central core value prop (Doctor Suite) */
 .feature-card.highlighted {
-  border-color: var(--primary-main);
   background: var(--primary-light);
-}
-
-.feature-icon {
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
-  display: inline-block;
-}
-
-.feature-card h3 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-}
-
-.feature-card p {
-  color: var(--text-dim);
-  font-weight: 600;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
-
-.feature-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.feature-list li {
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--text-main);
+  border-color: var(--primary-main);
 }
 
 /* Standardized footer for legal compliance and support navigation */
 .footer {
   background: var(--bg-pure);
   padding: 4rem 0;
-  border-top: 1px solid var(--glass-border);
+  border-top: 1px solid var(--bg-muted);
 }
 
 .simple-footer-content {
@@ -413,26 +372,26 @@ const scrollToSection = (id) => {
 .footer-left {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .footer-logo-minimal {
-  height: 50px;
+  height: 48px;
   width: auto;
   object-fit: contain;
-  opacity: 0.8;
 }
 
 .copyright {
   color: var(--text-dim);
   font-size: 0.9rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .footer-right {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .footer-link {
@@ -450,20 +409,21 @@ const scrollToSection = (id) => {
 .footer-divider {
   width: 1px;
   height: 16px;
-  background: var(--glass-border);
+  background: var(--bg-muted);
 }
 
 /* Responsive adjustments for mobile and tablet viewers */
 @media (max-width: 1024px) {
   .features-grid { grid-template-columns: 1fr; }
-  .hero-title { font-size: 3rem; }
 }
 
 @media (max-width: 768px) {
   .hero { padding: 12rem 1.5rem 8rem; }
-  .nav-links { display: none; } /* Simplified mobile nav for now */
+  .hero-title { font-size: 2.5rem; }
+  .hero-actions { flex-direction: column; width: 100%; max-width: 300px; margin: 0 auto; }
+  .nav-links { gap: 1rem; }
   .simple-footer-content { flex-direction: column; gap: 2rem; text-align: center; }
   .footer-left { flex-direction: column; gap: 1rem; }
+  .footer-right { gap: 1rem; flex-wrap: wrap; justify-content: center; }
 }
 </style>
-

@@ -19,8 +19,6 @@ const authStore = useAuthStore()
 // --- UI STATE ---
 // Reactive flag to control the visibility of the "Add Doctor" modal.
 const showProvisionModal = ref(false)
-// Controls the visibility of the "Edit User" modal.
-const showEditModal = ref(false)
 // Tracks the submission state to show loading indicators during provisioning.
 const isSubmitting = ref(false)
 // Holds validation or system error messages for display in the UI.
@@ -28,14 +26,19 @@ const errorMessage = ref('')
 // User input for real-time table filtering.
 const filterQuery = ref('')
 
-// Temporary buffer for the user profile currently being edited.
-const editingUser = ref(null)
+// --- EDIT STATE ---
+// Reactive flag for edit modal visibility.
+const showEditModal = ref(false)
+// Copy of the user being edited.
+const editingUser = ref({ name: '', email: '', specialization: '' })
 
 // --- DATA DERIVATION ---
 /**
  * filteredUsers - Computed property that provides a filtered subset of the user registry.
+ * Performs a case-insensitive search across names, emails, and roles.
  */
 const filteredUsers = computed(() => {
+  // If the search box is empty, return the full list.
   if (!filterQuery.value) return authStore.allUsers
   
   const q = filterQuery.value.toLowerCase()
@@ -47,45 +50,71 @@ const filteredUsers = computed(() => {
 })
 
 // --- FORM DATA ---
+/**
+ * newDoctor - Reactive object used to bind the provisioning form data.
+ * Initially seeded with a default passkey.
+ */
 const newDoctor = ref({
   name: '',
   email: '',
   specialization: '',
-  password: 'password'
+  password: 'password' // Initial default passkey for new clinical providers.
 })
 
 /**
- * provisionDoctor - Logic to register a new professional account.
+ * provisionDoctor - Logic to register a new professional account in the system.
+ * Includes validation, sanitization, and a simulated network latency.
  */
 const provisionDoctor = async () => {
   errorMessage.value = ''
+  
+  // 1. Basic empty-field validation.
   if (!newDoctor.value.name || !newDoctor.value.email || !newDoctor.value.specialization) {
     errorMessage.value = 'Complete doctor profile is required.'
     return
   }
+
+  // 2. Email format validation via utility.
   if (!validateEmail(newDoctor.value.email)) {
     errorMessage.value = 'Identity Error: Invalid professional email format.'
     return
   }
 
+  // Trigger loading state.
   isSubmitting.value = true
+  
+  // 3. Simulated API delay to give the user visual feedback.
   setTimeout(() => {
+    // 4. Sanitize inputs before persistent injection into the authStore.
     authStore.provisionDoctor({ 
       ...newDoctor.value,
       name: sanitize(newDoctor.value.name),
       email: sanitize(newDoctor.value.email),
-      specialization: sanitize(newDoctor.value.specialization),
-      status: 'active'
+      specialization: sanitize(newDoctor.value.specialization)
     })
+    
+    // 5. Cleanup UI state and reset form.
     newDoctor.value = { name: '', email: '', specialization: '', password: 'password' }
     isSubmitting.value = false
-    showProvisionModal.value = true
     showProvisionModal.value = false
   }, 800)
 }
 
 /**
- * startEdit - Prepares the UI to modify an existing user's profile.
+ * toggleAccess - Revokes or restores a user's login permissions.
+ */
+const toggleAccess = (user) => {
+  // Guard: Admins cannot have their own access revoked via this panel.
+  if (user.role === 'admin') return
+  
+  const action = user.status === 'revoked' ? 'Restore' : 'Revoke'
+  if (confirm(`${action} system access for ${user.name}?`)) {
+    authStore.toggleUserAccess(user.id)
+  }
+}
+
+/**
+ * startEdit - Initializes the edit flow for a selected user.
  */
 const startEdit = (user) => {
   editingUser.value = { ...user }
@@ -93,46 +122,41 @@ const startEdit = (user) => {
 }
 
 /**
- * saveUserEdit - Persists modifications to a user's clinical or personal identity.
+ * saveUserEdit - Persists modifications to a user's identity.
  */
 const saveUserEdit = async () => {
   errorMessage.value = ''
+  
   if (!editingUser.value.name || !editingUser.value.email) {
-    errorMessage.value = 'Profile fields cannot be empty.'
+    errorMessage.value = 'Identity fields are required.'
     return
   }
 
   isSubmitting.value = true
+  
+  // Simulated delay for premium feel
   setTimeout(() => {
     authStore.updateUser(editingUser.value.id, {
       name: sanitize(editingUser.value.name),
       email: sanitize(editingUser.value.email),
       specialization: editingUser.value.role === 'doctor' ? sanitize(editingUser.value.specialization) : undefined
     })
+    
     isSubmitting.value = false
     showEditModal.value = false
-    editingUser.value = null
   }, 600)
 }
 
 /**
- * toggleAccess - Flips a user's status between 'active' and 'revoked'.
- */
-const toggleAccess = (user) => {
-  const newStatus = user.status === 'revoked' ? 'active' : 'revoked'
-  authStore.updateStatus(user.id, newStatus)
-}
-
-/**
- * deleteUser - Permanently removes an identity from the system.
+ * deleteUser - Permanently purges a user from the registry.
  */
 const deleteUser = (user) => {
   if (user.role === 'admin') {
-    alert('System Administrators cannot be removed.')
+    alert('Security Protocol: Administrators cannot be deleted.')
     return
   }
   
-  if (confirm(`Permanently revoke access for ${user.name}? This cannot be undone.`)) {
+  if (confirm(`CRITICAL: Permanently delete ${user.name}? This cannot be undone and will remove all associated records.`)) {
     authStore.deleteUser(user.id)
   }
 }
